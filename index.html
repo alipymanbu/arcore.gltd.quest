@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>看不见的 AR 引擎：ARCore 在手机里做什么、谁需要它</title>
+  <meta name="description" content="AR 应用能把虚拟物件放进真实房间，靠的是底层的 ARCore 在做运动追踪与空间理解。这里拆解它的工作方式、机型认证门槛，以及安装文件资源的获取指引。">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+
+  <header class="nav">
+    <div class="wrap nav-inner">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M4 7.5l8 4.5 8-4.5M12 12v9"/></svg>
+        </span>
+        ARCore 说明站
+      </a>
+      <button class="nav-toggle" aria-expanded="false" aria-label="展开导航菜单"><span></span></button>
+      <nav class="nav-links" aria-label="站内导航">
+        <a href="#what">它是什么</a>
+        <a href="#how">工作原理</a>
+        <a href="#scenes">应用场景</a>
+        <a href="#devices">机型门槛</a>
+        <a href="#faq">常见问题</a>
+        <a href="download.html" class="nav-cta">获取安装资源</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="wrap hero-inner">
+        <span class="hero-badge"><span class="dot"></span>Google Play Services for AR</span>
+        <h1>你在 AR 应用里看到的每一个虚拟物件，<br>背后都是 <span class="grad">ARCore</span> 在盯着现实世界</h1>
+        <p class="lead">它没有桌面图标，不占屏幕一角，却在 AR 游戏开打的瞬间、实景导航亮起的那一刻，把摄像头画面、传感器数据和虚拟坐标对齐到毫米级。认识它，才能在装不上、用不了时知道去查哪里。</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" data-link="download" href="https://pan.quark.cn/s/c0f8249de2a5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+            获取安装文件资源
+          </a>
+          <a class="btn btn-ghost" href="download.html">查看安装步骤</a>
+        </div>
+        <div class="hero-meta">
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>网盘资源版本 1.52</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>安装包约 58.8 MB</span>
+          <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>Android 7.0 及以上</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 它是什么：三重身份 -->
+    <section class="section" id="what">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">Identity</span>
+          <h2>同一个东西，三个名字</h2>
+          <p>搜教程时看到的叫法经常不一样，先对上号，再谈怎么装、怎么用。</p>
+        </div>
+        <div class="id-grid">
+          <div class="id-card reveal">
+            <span class="id-tag">平台名</span>
+            <h3>ARCore</h3>
+            <p>Google 对这套 AR 平台的称呼，网上绝大多数教程、问答用的都是这个名字。本站全文也按它来称呼。</p>
+          </div>
+          <div class="id-card reveal">
+            <span class="id-tag">应用列表里的名字</span>
+            <h3>Google Play Services for AR</h3>
+            <p>中文界面常显示为「面向 AR 的 Google Play 服务」。在手机的应用管理里搜它，才能确认装没装、版本多新。</p>
+          </div>
+          <div class="id-card reveal">
+            <span class="id-tag">包名</span>
+            <h3>com.google.ar.core</h3>
+            <p>安装记录与 APK 文件名里出现的标识。AR 应用检测「设备能不能跑 AR」，认的就是它的存在与版本。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 工作原理 -->
+    <section class="section section-alt" id="how">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">How it works</span>
+          <h2>四个能力，撑起手机上的 AR 体验</h2>
+          <p>AR 应用自己只画虚拟内容；「虚拟内容该摆在哪、朝哪个方向」，全部交给这层服务实时计算。</p>
+        </div>
+        <div class="cap-grid">
+          <div class="cap-card reveal">
+            <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9L12 3z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span>
+            <h3>运动追踪</h3>
+            <p>用摄像头特征点配合惯性传感器，实时判断手机在空间里的位置与姿态——移动手机，虚拟物件的视角跟着变，才像「真的在那儿」。</p>
+          </div>
+          <div class="cap-card reveal">
+            <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17l5-9 4 6 3-4 6 7"/><path d="M3 21h18"/></svg></span>
+            <h3>环境理解</h3>
+            <p>识别出地面、桌面、墙面这些常见平面，让 AR 应用知道「哪里能放东西」——桌子上的那只 AR 立方体，就是先找到了桌面才落得稳。</p>
+          </div>
+          <div class="cap-card reveal">
+            <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18"/><path d="M12 3v18"/></svg></span>
+            <h3>深度与遮挡</h3>
+            <p>借助深度 API 估算画面里每个物体的远近，虚拟内容可以被真实的桌角、花瓶挡住——遮挡越自然，真实感越强。</p>
+          </div>
+          <div class="cap-card reveal">
+            <span class="cap-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg></span>
+            <h3>光照估计</h3>
+            <p>根据摄像头画面估计环境亮度与色温，让虚拟物体的阴影、反光贴合当下光线，避免出现「黑屋子里发亮的模型」这类穿帮。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 应用场景 -->
+    <section class="section" id="scenes">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">Use cases</span>
+          <h2>哪些应用离不开它</h2>
+          <p>装不装，取决于用不用得上这些场景——只要命中一条，这层服务就值得备好。</p>
+        </div>
+        <div class="scene-grid">
+          <div class="scene-card reveal">
+            <span class="scene-num">01</span>
+            <div><h3>Google 地图实景导航</h3><p>步行导航的「实景」模式把转向箭头叠在真实街道上，这层画面就是它在驱动。进不去实景模式，第一件事就是查它。</p></div>
+          </div>
+          <div class="scene-card reveal">
+            <span class="scene-num">02</span>
+            <div><h3>AR 游戏</h3><p>把角色、怪物放进客厅和街道的那类游戏，启动时会要求先装好这套服务，缺了它游戏直接进不去。</p></div>
+          </div>
+          <div class="scene-card reveal">
+            <span class="scene-num">03</span>
+            <div><h3>家具与商品试摆</h3><p>购物应用里「把沙发放进客厅看看大小」的功能，靠它把 3D 商品模型钉在摄像头拍到的地板上。</p></div>
+          </div>
+          <div class="scene-card reveal">
+            <span class="scene-num">04</span>
+            <div><h3>搜索里的 3D 结果</h3><p>部分机型上，搜索动物、器官等词会出现「以 3D 形式查看」，能把模型摆到眼前的桌面上近距离观察。</p></div>
+          </div>
+          <div class="scene-card reveal">
+            <span class="scene-num">05</span>
+            <div><h3>AR 测量工具</h3><p>用摄像头对着空间量尺寸、测距离的小工具，本质上是在它给出的平面上做几何计算。</p></div>
+          </div>
+          <div class="scene-card reveal">
+            <span class="scene-num">06</span>
+            <div><h3>3D 查看与教育展示</h3><p>查看 3D 模型与真实环境位置关系的应用，包括星空图鉴、模型展示类应用，都依赖同一套空间定位。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 截图墙 -->
+    <section class="section section-alt">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">Demo</span>
+          <h2>虚实叠合长什么样</h2>
+          <p>下面是典型的 AR 演示画面：虚拟的几何体被稳定地「放」在真实桌面与画框上，随手势与视角移动保持贴合。</p>
+        </div>
+        <div class="shots">
+          <figure class="shot reveal">
+            <img src="/assets/img/ar-scene-1.jpg" alt="AR 演示：紫色玻璃质感的立方体与白色球体被放置在真实木桌上" width="320" height="533" loading="lazy">
+            <figcaption>虚拟物件稳稳落在真实桌面上，底部贴合处带接触阴影</figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="/assets/img/ar-scene-2.jpg" alt="AR 演示：立方体吸附在倾斜的木质斜面上并保持稳定" width="320" height="533" loading="lazy">
+            <figcaption>斜面也能贴合——平面检测把倾斜表面一并识别</figcaption>
+          </figure>
+          <figure class="shot reveal">
+            <img src="/assets/img/ar-scene-3.jpg" alt="AR 演示：立方体穿过真实墙面上的画框形成穿插效果" width="320" height="533" loading="lazy">
+            <figcaption>虚拟与真实相互遮挡，层次关系来自深度估算</figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- 机型门槛 -->
+    <section class="section" id="devices">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">Requirements</span>
+          <h2>两道门槛，先过再装</h2>
+          <p>装不上的大多数情况，都卡在机型这一关——先查清楚，能省掉大半折腾。</p>
+        </div>
+        <div class="gate-grid">
+          <div class="gate-main reveal">
+            <h3>装机前核对清单</h3>
+            <ul class="gate-list">
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <span><strong>机型在 Google 认证名单里。</strong>Google 对每个型号单独认证摄像头与传感器能力；名单外的机型装了也无法使用。可在 Google 开发者文档的「认证设备名单」页面用浏览器页内搜索（Ctrl+F）查自己的型号。</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <span><strong>系统版本达标。</strong>名单里没有单独标注的机型，需要 Android 7.0 或更高；部分机型有自己的最低版本要求，以名单页标注为准。</span>
+              </li>
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                <span><strong>剩余存储空间充足。</strong>安装包约 58.8 MB，安装与运行还需要额外空间，手机存储太满时安装会中途失败。</span>
+              </li>
+            </ul>
+          </div>
+          <div class="gate-side">
+            <div class="gate-note reveal">
+              <h4>国行手机的情况</h4>
+              <p>认证名单针对硬件型号。型号在名单里，还需要手机上有完整的 Google 服务框架（含 Play 商店）才能真正工作。可在 Play 商店的「设置 → 关于 → Play 保护机制认证」里核对设备认证状态。</p>
+            </div>
+            <div class="gate-note warn reveal">
+              <h4>iPhone / iPad 找不到它</h4>
+              <p>苹果设备走的是自带的 ARKit，两者互不相通，应用商店里也搜不到这套服务。安卓平板与手机规则一致，达标即可用。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 要不要装 -->
+    <section class="section section-alt">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">Decision</span>
+          <h2>三步判断要不要装</h2>
+          <p>不需要研究参数，按顺序过一遍就有答案。</p>
+        </div>
+        <div class="decide-steps" style="padding-top: 18px;">
+          <div class="decide reveal">
+            <h3>先看有没有 AR 应用</h3>
+            <p>手机里装过 AR 游戏、用过实景导航或家具试摆吗？用过，说明需要它；完全不用 AR 应用，装了也没有用武之地。</p>
+          </div>
+          <div class="decide reveal">
+            <h3>再查机型与系统</h3>
+            <p>按上面的核对清单过一遍机型认证与 Android 版本。机型不在名单里，装什么都启动不了，这是唯一的硬门槛。</p>
+          </div>
+          <div class="decide reveal">
+            <h3>最后让应用来提醒</h3>
+            <p>拿不准就打开那个 AR 应用——缺服务时它会自己弹窗引导安装。网络环境不便时，可先把安装文件资源存进网盘备用。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="wrap">
+        <div class="sec-head reveal">
+          <span class="sec-kicker">FAQ</span>
+          <h2>高频疑问，一次说清</h2>
+        </div>
+        <div class="faq">
+          <div class="faq-item reveal">
+            <button class="faq-q" aria-expanded="false">装完之后桌面上没有图标，是不是没装上？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="faq-a"><p>这是正常的。它以系统服务的形式存在，不会出现在桌面或应用抽屉里。验证方法：打开「设置 → 应用管理」，在列表里搜 Google Play Services for AR（或「面向 AR 的 Google Play 服务」），能找到即安装成功。</p></div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-q" aria-expanded="false">平时会不会偷跑、费电？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="faq-a"><p>它平时只是待命，不主动占用摄像头和运算资源。只有打开 AR 应用的那一刻才开始工作——耗电主要发生在实际使用 AR 功能的时候，装完闲着的时候几乎没有存在感。</p></div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-q" aria-expanded="false">应用提示「不支持该设备」怎么办？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="faq-a"><p>先确认机型在认证名单里、系统达到 Android 7.0。机型确实不在名单里的话，换支持的设备是唯一可行路径——这不是版本新旧的问题，而是硬件能力没通过认证。个别应用弹的「不支持」也可能指它自己的机型黑名单，与这层服务无关。</p></div>
+          </div>
+          <div class="faq-item reveal">
+            <button class="faq-q" aria-expanded="false">装了之后能卸载吗？<svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="faq-a"><p>分两种情况：自己安装的可以在「设置 → 应用管理」里正常卸载，依赖它的 AR 应用会随之失效；厂商预装的属于系统应用，没有卸载入口，最多只能在应用信息里「停用」或「卸载更新」。想减小占用时，选「卸载更新」回到出厂版本即可。</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-band">
+      <div class="wrap reveal">
+        <h2>把安装文件资源先备进网盘</h2>
+        <p>换机、重装、给家人装的时候，随时转存随时可用。</p>
+        <a class="btn btn-primary" data-link="download" href="https://pan.quark.cn/s/c0f8249de2a5">获取安装文件资源</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <p>本站为第三方介绍页面，展示素材来自公开资料，版权归原作者所有。</p>
+      <p><a href="/">ARCore 说明站</a> · <a href="download.html">获取安装文件资源</a></p>
+    </div>
+  </footer>
+
+  <div class="float-btns">
+    <button class="float-top" aria-label="返回顶部">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5m0 0l-6 6m6-6l6 6"/></svg>
+    </button>
+    <a class="float-dl" data-link="download" href="https://pan.quark.cn/s/c0f8249de2a5" aria-label="获取安装文件资源">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2"/></svg>
+    </a>
+  </div>
+
+  <script src="/assets/js/links.js"></script>
+  <script src="/assets/js/main.js"></script>
+</body>
+</html>
